@@ -30,7 +30,7 @@ import com.jwplayer.pub.api.PlayerState
 @Composable
 fun VideoPlayer(
   modifier: Modifier = Modifier,
-  lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
+  lifecycleOwner: LifecycleOwner,
   videoState: VideoState,
   handleEvent: (event: VideoEvent) -> Unit
 ) {
@@ -81,19 +81,6 @@ fun VideoPlayer(
       togglePlayingState = {
         handleEvent(VideoEvent.ToggleStatus)
       }
-    )
-  }
-}
-@ExperimentalAnimationApi
-@ExperimentalComposeUiApi
-@Preview
-@Composable
-fun Preview_VideoPlayer() {
-  MaterialTheme {
-    VideoPlayer(
-      modifier = Modifier.fillMaxSize(),
-      videoState = VideoState(),
-      handleEvent = { }
     )
   }
 }

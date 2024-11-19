@@ -14,7 +14,7 @@ import com.jwplayer.pub.view.JWPlayerView
 @Composable
 fun Playback(
   modifier: Modifier = Modifier,
-  lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
+  lifecycleOwner: LifecycleOwner,
   videoState: VideoState,
   handleEvent: (event: VideoEvent) -> Unit,
   context: Context

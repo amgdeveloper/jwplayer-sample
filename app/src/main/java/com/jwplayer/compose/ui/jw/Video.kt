@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jwplayer.compose.viewmodel.VideoViewModel
 
@@ -17,9 +19,19 @@ import com.jwplayer.compose.viewmodel.VideoViewModel
 @ExperimentalAnimationApi
 @Composable
 fun Video(
-  lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 ) {
   val viewModel: VideoViewModel = viewModel()
+
+  val lifecycleOwner = remember { CustomLifecycleOwner() }
+
+  DisposableEffect(Unit) {
+    lifecycleOwner.moveToState(Lifecycle.State.STARTED) // Move to STARTED
+
+    onDispose {
+      Log.e("TAG","Video Composable onDispose")
+      lifecycleOwner.moveToState(Lifecycle.State.DESTROYED) // Move to DESTROYED
+    }
+  }
 
   VideoPlayer(
     modifier = Modifier.fillMaxSize(),
@@ -27,10 +39,22 @@ fun Video(
     lifecycleOwner = lifecycleOwner,
     handleEvent = viewModel::handleEvent
   )
+}
 
-  DisposableEffect(Unit) {
-    onDispose {
-      Log.e("TAG","Video Composable onDispose")
-    }
+class CustomLifecycleOwner : LifecycleOwner {
+  private val lifecycleRegistry = LifecycleRegistry(this)
+
+  init {
+    lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
   }
+
+
+  override val lifecycle: Lifecycle
+    get() = lifecycleRegistry
+
+
+  fun moveToState(state: Lifecycle.State) {
+    lifecycleRegistry.currentState = state
+  }
+
 }

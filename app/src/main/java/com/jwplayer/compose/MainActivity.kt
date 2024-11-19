@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalAnimationApi::class)
+
 package com.jwplayer.compose
 
 import android.os.Bundle
@@ -18,6 +20,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -31,59 +34,64 @@ import com.jwplayer.pub.api.license.LicenseUtil
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
 class MainActivity : ComponentActivity() {
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    LicenseUtil().setLicenseKey(this, "")
+        LicenseUtil().setLicenseKey(this, "")
 
-    setContent {
-      JWComposeTheme {
-        val navController = rememberNavController()
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-          NavHost(navController = navController, startDestination = "home") {
-            composable("home") { HomeScreen(navController) }
-            composable("video") { Video(lifecycleOwner = this@MainActivity) }
-          }
+        setContent {
+            JWComposeTheme {
+                val navController = rememberNavController()
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background
+                ) {
+                    NavHost(navController = navController, startDestination = "home") {
+                        composable("home") { HomeScreen(navController) }
+                        composable("video") { Video() }
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }
+
 
 @Composable
 fun HomeScreen(navController: NavController) {
-  Box(
-    modifier = Modifier
-      .fillMaxSize()
-      .padding(16.dp),
-    contentAlignment = Alignment.Center
-  ) {
-    Button(
-      onClick = { navController.navigate("video") },
-      modifier = Modifier.size(100.dp, 50.dp) // Adjust the width and height as needed
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
     ) {
-      Text("Show Video")
+
+        Button(
+            onClick = {
+                navController.navigate("video")
+            },
+            modifier = Modifier.size(100.dp, 50.dp) // Adjust the width and height as needed
+        ) {
+            Text("Show Video")
+        }
     }
-  }
 
-
-
-  DisposableEffect(Unit) {
-    onDispose {
-      Log.e("TAG","HomeScreen onDispose")
+    DisposableEffect(Unit) {
+        onDispose {
+            Log.e("TAG", "HomeScreen onDispose")
+        }
     }
-  }
 }
 
 @Composable
 fun Greeting(name: String) {
-  Text(text = "Hello $name!")
+    Text(text = "Hello $name!")
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-  JWComposeTheme {
-    Greeting("Android")
-  }
+    JWComposeTheme {
+        Greeting("Android")
+    }
 }
