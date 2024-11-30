@@ -5,6 +5,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -24,9 +25,11 @@ fun Video(
 
   val lifecycleOwner = remember { CustomLifecycleOwner() }
 
-  DisposableEffect(Unit) {
+  LaunchedEffect(Unit) {
     lifecycleOwner.moveToState(Lifecycle.State.STARTED) // Move to STARTED
+  }
 
+  DisposableEffect(Unit) {
     onDispose {
       Log.e("TAG","Video Composable onDispose")
       lifecycleOwner.moveToState(Lifecycle.State.DESTROYED) // Move to DESTROYED
